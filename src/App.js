@@ -1,35 +1,40 @@
-import React from 'react';
-import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
-import Home from './pages/Home';
-import About from './pages/About';
+import React, { useState } from 'react';
+import { CartProvider } from './components/CartContext';
+import Header from './components/Header';
+import Footer from './components/Footer';
+import HomePage from './pages/HomePage';
+import ProductsPage from './pages/ProductsPage';
+import ProductDetailPage from './pages/ProductDetailPage';
+import CartPage from './pages/CartPage';
+import CheckoutPage from './pages/CheckoutPage';
 
 function App() {
+  const [currentPage, setCurrentPage] = useState('home');
+  const [selectedVehicle, setSelectedVehicle] = useState(null);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+
   return (
-    <Router>
-      <div style={{ fontFamily: 'Arial, sans-serif', background: '#f0f2f5', minHeight: '100vh' }}>
-        <header style={{ padding: '1rem 2rem', backgroundColor: '#fff', boxShadow: '0 2px 5px rgba(0,0,0,0.1)' }}>
-          <h1 style={{ margin: 0, fontSize: '1.5rem', color: '#333' }}>Jim's Portfolio</h1>
-          <nav style={{ marginTop: '0.5rem' }}>
-            <Link to="/" style={navLinkStyle}>Home</Link>
-            <Link to="/about" style={navLinkStyle}>About</Link>
-          </nav>
-        </header>
-        <main style={{ display: 'flex', justifyContent: 'center', padding: '2rem' }}>
-          <Routes>
-            <Route path="/" element={<Home />} />
-            <Route path="/about" element={<About />} />
-          </Routes>
+    <CartProvider>
+      <div className="min-h-screen bg-gray-900 text-white">
+        <Header 
+          currentPage={currentPage} 
+          setCurrentPage={setCurrentPage}
+          mobileMenuOpen={mobileMenuOpen}
+          setMobileMenuOpen={setMobileMenuOpen}
+        />
+        
+        <main className="min-h-screen">
+          {currentPage === 'home' && <HomePage setCurrentPage={setCurrentPage} />}
+          {currentPage === 'products' && <ProductsPage setSelectedVehicle={setSelectedVehicle} setCurrentPage={setCurrentPage} />}
+          {currentPage === 'product-detail' && selectedVehicle && <ProductDetailPage vehicle={selectedVehicle} />}
+          {currentPage === 'cart' && <CartPage setCurrentPage={setCurrentPage} />}
+          {currentPage === 'checkout' && <CheckoutPage />}
         </main>
+        
+        <Footer />
       </div>
-    </Router>
+    </CartProvider>
   );
 }
-
-const navLinkStyle = {
-  marginRight: '1rem',
-  textDecoration: 'none',
-  color: '#1976d2',
-  fontWeight: 'bold'
-};
 
 export default App;
